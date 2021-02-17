@@ -1,15 +1,8 @@
-# Project discontinued
-
-I haven't had to deal with XML and releated technologies for many years now and I don't feel capable of making informed decisions about this project anymore. I would like to thank everyone who contributed or wanted to contribute for their interest. I recommend you browse the available forks and find one that is still actively developed.
-
 # xs3p XSD documentation generator
 
-This tool generates nice-looking HTML documentation from XML Schema
-Descriptions.
+This tool generates nice-looking HTML documentation from XML Schema Descriptions.
 
-It is a fork of version 1.1.5 of the xs3p doc tool from
-http://xml.fiforms.org/xs3p/ - see the [original README](README_ORIG.txt) for
-more information.
+It is a fork of version 1.1.5 of the xs3p doc tool from https://github.com/bitfehler/xs3p - see the [original README](README_ORIG.txt) for more information.
 
 Added features include:
 
@@ -19,20 +12,6 @@ Added features include:
  - Support [Markdown](https://daringfireball.net/projects/markdown/ "Markdown homepage")
    formatting in `<documentation>` elements, powered by the
    [Pagedown library](https://code.google.com/archive/p/pagedown/ "Pagedown homepage")
-
-You can see a nice example result here:
-
- * https://bitfehler.net/xs3p/address_annotated.xsd.html
-
-which is the result of [one of the
-examples](examples/address_annotated.xsd "XSD source of the example")
-added specifically to demonstrate the new features of this fork.
-
-Another interesting example is the result for the XML Schema .xsd itself:
-
- * https://bitfehler.net/xs3p/XMLSchema.xsd.html
-
-That one pushes the system to its limits, but it's still useful in my opinion.
 
 ### Known issues
 
