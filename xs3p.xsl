@@ -95,7 +95,7 @@
  exclude-result-prefixes="xsd ppp html">
 
    <xsl:output
-    method="xml"
+    method="html"
     omit-xml-declaration="yes"
     doctype-system="about:legacy-compat"
     indent="yes"/>
