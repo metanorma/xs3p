@@ -2161,8 +2161,8 @@ dl {
                <th>Name</th>
                <td><xsl:value-of select="@name"/></td>
             </tr> -->
-            <!-- Type -->
             <dl class="dl-horizontal">
+               <!-- Type -->
                <dt>Type</dt>
                <dd>
                   <xsl:choose>
@@ -2182,93 +2182,107 @@ dl {
                      </xsl:otherwise>
                   </xsl:choose>
                </dd>
-            <!-- Nillable -->
-              <xsl:if test="@nillable">
-               <dt>
-                  <xsl:call-template name="PrintGlossaryTermRef">
-                     <xsl:with-param name="code">Nillable</xsl:with-param>
-                     <xsl:with-param name="term">Nillable</xsl:with-param>
-                  </xsl:call-template>
-               </dt>
-               <dd>
-                  <xsl:call-template name="PrintBoolean">
-                     <xsl:with-param name="boolean" select="@nillable"/>
-                  </xsl:call-template>
-               </dd>
+               
+               <xsl:variable name="usedBy">
+                  <xsl:for-each select="/xsd:schema//xsd:element[@ref = current()/@name]">
+                      <xsl:call-template name="PrintTypeRef">
+                        <xsl:with-param name="ref" select="ancestor::xsd:complexType/@name"/>
+                     </xsl:call-template>
+                     <xsl:if test="position() != last()">, </xsl:if>
+                  </xsl:for-each>
+               </xsl:variable>
+               <xsl:if test="normalize-space($usedBy)!=''">
+                 <dt>Used By</dt>
+                 <dd><xsl:copy-of select="$usedBy"/></dd>
+               </xsl:if>
+               
+               <!-- Nillable -->
+               <xsl:if test="@nillable">
+                  <dt>
+                     <xsl:call-template name="PrintGlossaryTermRef">
+                        <xsl:with-param name="code">Nillable</xsl:with-param>
+                        <xsl:with-param name="term">Nillable</xsl:with-param>
+                     </xsl:call-template>
+                  </dt>
+                  <dd>
+                     <xsl:call-template name="PrintBoolean">
+                        <xsl:with-param name="boolean" select="@nillable"/>
+                     </xsl:call-template>
+                  </dd>
               </xsl:if>
-            <!-- Abstract -->
-            <xsl:if test="@abstract">
-               <dt>
-                  <xsl:call-template name="PrintGlossaryTermRef">
-                     <xsl:with-param name="code">Abstract</xsl:with-param>
-                     <xsl:with-param name="term">Abstract</xsl:with-param>
+               <!-- Abstract -->
+               <xsl:if test="@abstract">
+                  <dt>
+                     <xsl:call-template name="PrintGlossaryTermRef">
+                        <xsl:with-param name="code">Abstract</xsl:with-param>
+                        <xsl:with-param name="term">Abstract</xsl:with-param>
+                     </xsl:call-template>
+                  </dt>
+                  <dd>
+                     <xsl:call-template name="PrintBoolean">
+                        <xsl:with-param name="boolean" select="@abstract"/>
+                     </xsl:call-template>
+                  </dd>
+                </xsl:if>
+               
+               <!-- Default Value -->
+               <xsl:if test="@default">
+                   <dt>Default Value</dt>
+                   <dd><xsl:value-of select="@default"/></dd>
+               </xsl:if>
+               <!-- Fixed Value -->
+               <xsl:if test="@fixed">
+                   <dt>Fixed Value</dt>
+                   <dd><xsl:value-of select="@fixed"/></dd>
+               </xsl:if>
+               <!-- Final -->
+               <xsl:variable name="final">
+                  <xsl:call-template name="PrintDerivationSet">
+                     <xsl:with-param name="EBV">
+                        <xsl:choose>
+                           <xsl:when test="@final">
+                              <xsl:value-of select="@final"/>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <xsl:value-of select="/xsd:schema/@finalDefault"/>
+                           </xsl:otherwise>
+                        </xsl:choose>
+                     </xsl:with-param>
                   </xsl:call-template>
-               </dt>
-               <dd>
-                  <xsl:call-template name="PrintBoolean">
-                     <xsl:with-param name="boolean" select="@abstract"/>
+               </xsl:variable>
+               <xsl:if test="normalize-space($final)!=''">
+                 <dt>
+                    <xsl:call-template name="PrintGlossaryTermRef">
+                       <xsl:with-param name="code">ElemFinal</xsl:with-param>
+                       <xsl:with-param name="term">Substitution Group Exclusions</xsl:with-param>
+                    </xsl:call-template>
+                 </dt>
+                 <dd><xsl:value-of select="$final"/></dd>
+               </xsl:if>
+               <!-- Block -->
+               <xsl:variable name="block">
+                  <xsl:call-template name="PrintBlockSet">
+                     <xsl:with-param name="EBV">
+                        <xsl:choose>
+                           <xsl:when test="@block">
+                              <xsl:value-of select="@block"/>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <xsl:value-of select="/xsd:schema/@blockDefault"/>
+                           </xsl:otherwise>
+                        </xsl:choose>
+                     </xsl:with-param>
                   </xsl:call-template>
-               </dd>
-             </xsl:if>
-            
-            <!-- Default Value -->
-            <xsl:if test="@default">
-                <dt>Default Value</dt>
-                <dd><xsl:value-of select="@default"/></dd>
-            </xsl:if>
-            <!-- Fixed Value -->
-            <xsl:if test="@fixed">
-                <dt>Fixed Value</dt>
-                <dd><xsl:value-of select="@fixed"/></dd>
-            </xsl:if>
-            <!-- Final -->
-            <xsl:variable name="final">
-               <xsl:call-template name="PrintDerivationSet">
-                  <xsl:with-param name="EBV">
-                     <xsl:choose>
-                        <xsl:when test="@final">
-                           <xsl:value-of select="@final"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                           <xsl:value-of select="/xsd:schema/@finalDefault"/>
-                        </xsl:otherwise>
-                     </xsl:choose>
-                  </xsl:with-param>
-               </xsl:call-template>
-            </xsl:variable>
-            <xsl:if test="normalize-space($final)!=''">
-              <dt>
-                 <xsl:call-template name="PrintGlossaryTermRef">
-                    <xsl:with-param name="code">ElemFinal</xsl:with-param>
-                    <xsl:with-param name="term">Substitution Group Exclusions</xsl:with-param>
-                 </xsl:call-template>
-              </dt>
-              <dd><xsl:value-of select="$final"/></dd>
-            </xsl:if>
-            <!-- Block -->
-            <xsl:variable name="block">
-               <xsl:call-template name="PrintBlockSet">
-                  <xsl:with-param name="EBV">
-                     <xsl:choose>
-                        <xsl:when test="@block">
-                           <xsl:value-of select="@block"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                           <xsl:value-of select="/xsd:schema/@blockDefault"/>
-                        </xsl:otherwise>
-                     </xsl:choose>
-                  </xsl:with-param>
-               </xsl:call-template>
-            </xsl:variable>
-            <xsl:if test="normalize-space($block)!=''">
-              <dt>
-                 <xsl:call-template name="PrintGlossaryTermRef">
-                    <xsl:with-param name="code">ElemBlock</xsl:with-param>
-                    <xsl:with-param name="term">Disallowed Substitutions</xsl:with-param>
-                 </xsl:call-template>
-              </dt>
-              <dd><xsl:value-of select="$block"/></dd>
-            </xsl:if>
+               </xsl:variable>
+               <xsl:if test="normalize-space($block)!=''">
+                 <dt>
+                    <xsl:call-template name="PrintGlossaryTermRef">
+                       <xsl:with-param name="code">ElemBlock</xsl:with-param>
+                       <xsl:with-param name="term">Disallowed Substitutions</xsl:with-param>
+                    </xsl:call-template>
+                 </dt>
+                 <dd><xsl:value-of select="$block"/></dd>
+               </xsl:if>
             </dl>
          </xsl:with-param>
       </xsl:call-template>
