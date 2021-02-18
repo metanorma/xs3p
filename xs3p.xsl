@@ -238,6 +238,8 @@
       <!-- Representation table -->
    <xsl:variable name="HELP_REPRESENTATION">The Schema Component Representation table above displays the underlying XML representation of the schema component. (Annotations are not shown.)</xsl:variable>
 
+   <xsl:variable name="showCollapseableBox">false</xsl:variable>
+   
    <!-- ******** Main Document ******** -->
 
    <!--
@@ -682,9 +684,10 @@
          </xsl:choose>
          <xsl:text>: </xsl:text>
          <!-- Name -->
-         <a id="{$componentID}" class="name" data-html="true" data-placement="bottom" data-toggle="tooltip" title="Schema component name.">
-            <xsl:value-of select="$component/@name"/>
-         </a>
+         <!-- <a id="{$componentID}" class="name" data-html="true" data-placement="bottom" data-toggle="tooltip" title="Schema component name."> -->
+         <a id="{$componentID}"/>
+            <strong><xsl:value-of select="$component/@name"/></strong>
+         <!-- </a> -->
       </h3>
    </xsl:template>
 
@@ -821,6 +824,10 @@ pre {
 .codehilite .s   {color: #D2322D;}
 .codehilite a       {color: inherit !important; text-decoration: underline !important;}
 .codehilite a:hover {opacity: 0.7 !important;}
+
+dl {
+  margin-bottom: 10px;
+}
 
 @media (min-width: 992px) {
     .xs3p-sidebar {
@@ -1760,10 +1767,11 @@ pre {
             <table class="table table-striped xs3p-in-panel-table">
                <tbody>
                   <!-- Name -->
-                  <tr>
+                  <!-- Commented, not necessary to repeat  @name -->
+                  <!-- <tr>
                      <th>Name</th>
                      <td><xsl:value-of select="@name"/></td>
-                  </tr>
+                  </tr> -->
                   <!-- Type -->
                   <tr>
                      <th>Type</th>
@@ -1840,15 +1848,16 @@ pre {
          <xsl:with-param name="styleClass">sample</xsl:with-param>
          <xsl:with-param name="caption">Properties</xsl:with-param>
          <xsl:with-param name="contents">
-            <table class="table tables-striped xs3p-in-panel-table">
-               <tbody>
+            <!-- Commented, not necessary to repeat  @name -->
+            <!-- <table class="table tables-striped xs3p-in-panel-table">
+               <tbody> -->
                   <!-- Name -->
-                  <tr>
+                 <!--  <tr>
                      <th>Name</th>
                      <td><xsl:value-of select="@name"/></td>
                   </tr>
                </tbody>
-            </table>
+            </table> -->
          </xsl:with-param>
          <xsl:with-param name="isOpened">true</xsl:with-param>
          <xsl:with-param name="omitPanelContainer">true</xsl:with-param>
@@ -1893,10 +1902,11 @@ pre {
          <table class="table table-striped xs3p-in-panel-table">
             <tbody>
                <!-- Name -->
-               <tr>
+               <!-- Commented, not necessary to repeat  @name -->
+               <!-- <tr>
                   <th>Name</th>
                   <td><xsl:value-of select="@name"/></td>
-               </tr>
+               </tr> -->
                <!-- Abstract -->
                <tr>
                   <th>
@@ -1995,148 +2005,276 @@ pre {
      element declaration.
      -->
    <xsl:template match="xsd:element" mode="properties">
-      <xsl:call-template name="CollapseableBox">
-         <xsl:with-param name="id">
+      <xsl:if test="$showCollapseableBox = 'true'">
+         <xsl:call-template name="CollapseableBox">
+            <xsl:with-param name="id">
+               <xsl:call-template name="GetComponentID">
+                  <xsl:with-param name="component" select="."/>
+               </xsl:call-template>
+            </xsl:with-param>
+            <xsl:with-param name="help" select="$HELP_PROPERTIES"/>
+            <xsl:with-param name="anchor">properties-table</xsl:with-param>
+            <xsl:with-param name="styleClass">sample</xsl:with-param>
+            <xsl:with-param name="caption">Properties</xsl:with-param>
+            <xsl:with-param name="contents">
+               <table class="table table-striped xs3p-in-panel-table">
+                  <tbody>
+                     <!-- Name -->
+                     <!-- Commented, not necessary to repeat  @name -->
+                     <!-- <tr>
+                        <th>Name</th>
+                        <td><xsl:value-of select="@name"/></td>
+                     </tr> -->
+                     <!-- Type -->
+                     <tr>
+                        <th>Type</th>
+                        <td>
+                           <xsl:choose>
+                              <xsl:when test="xsd:simpleType">
+                                 <xsl:text>Locally-defined simple type</xsl:text>
+                              </xsl:when>
+                              <xsl:when test="xsd:complexType">
+                                 <xsl:text>Locally-defined complex type</xsl:text>
+                              </xsl:when>
+                              <xsl:when test="@type">
+                                 <xsl:call-template name="PrintTypeRef">
+                                    <xsl:with-param name="ref" select="@type"/>
+                                 </xsl:call-template>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                 <xsl:text>anyType</xsl:text>
+                              </xsl:otherwise>
+                           </xsl:choose>
+                        </td>
+                     </tr>
+                     <!-- Nillable -->
+                     <tr>
+                        <th>
+                           <xsl:call-template name="PrintGlossaryTermRef">
+                              <xsl:with-param name="code">Nillable</xsl:with-param>
+                              <xsl:with-param name="term">Nillable</xsl:with-param>
+                           </xsl:call-template>
+                        </th>
+                        <td>
+                           <xsl:call-template name="PrintBoolean">
+                              <xsl:with-param name="boolean" select="@nillable"/>
+                           </xsl:call-template>
+                        </td>
+                     </tr>
+                     <!-- Abstract -->
+                     <tr>
+                        <th>
+                           <xsl:call-template name="PrintGlossaryTermRef">
+                              <xsl:with-param name="code">Abstract</xsl:with-param>
+                              <xsl:with-param name="term">Abstract</xsl:with-param>
+                           </xsl:call-template>
+                        </th>
+                        <td>
+                           <xsl:call-template name="PrintBoolean">
+                              <xsl:with-param name="boolean" select="@abstract"/>
+                           </xsl:call-template>
+                        </td>
+                     </tr>
+                     <!-- Default Value -->
+                     <xsl:if test="@default">
+                        <tr>
+                           <th>Default Value</th>
+                           <td><xsl:value-of select="@default"/></td>
+                        </tr>
+                     </xsl:if>
+                     <!-- Fixed Value -->
+                     <xsl:if test="@fixed">
+                        <tr>
+                           <th>Fixed Value</th>
+                           <td><xsl:value-of select="@fixed"/></td>
+                        </tr>
+                     </xsl:if>
+                     <!-- Final -->
+                     <xsl:variable name="final">
+                        <xsl:call-template name="PrintDerivationSet">
+                           <xsl:with-param name="EBV">
+                              <xsl:choose>
+                                 <xsl:when test="@final">
+                                    <xsl:value-of select="@final"/>
+                                 </xsl:when>
+                                 <xsl:otherwise>
+                                    <xsl:value-of select="/xsd:schema/@finalDefault"/>
+                                 </xsl:otherwise>
+                              </xsl:choose>
+                           </xsl:with-param>
+                        </xsl:call-template>
+                     </xsl:variable>
+                     <xsl:if test="normalize-space($final)!=''">
+                        <tr>
+                           <th>
+                              <xsl:call-template name="PrintGlossaryTermRef">
+                                 <xsl:with-param name="code">ElemFinal</xsl:with-param>
+                                 <xsl:with-param name="term">Substitution Group Exclusions</xsl:with-param>
+                              </xsl:call-template>
+                           </th>
+                           <td><xsl:value-of select="$final"/></td>
+                        </tr>
+                     </xsl:if>
+                     <!-- Block -->
+                     <xsl:variable name="block">
+                        <xsl:call-template name="PrintBlockSet">
+                           <xsl:with-param name="EBV">
+                              <xsl:choose>
+                                 <xsl:when test="@block">
+                                    <xsl:value-of select="@block"/>
+                                 </xsl:when>
+                                 <xsl:otherwise>
+                                    <xsl:value-of select="/xsd:schema/@blockDefault"/>
+                                 </xsl:otherwise>
+                              </xsl:choose>
+                           </xsl:with-param>
+                        </xsl:call-template>
+                     </xsl:variable>
+                     <xsl:if test="normalize-space($block)!=''">
+                        <tr>
+                           <th>
+                              <xsl:call-template name="PrintGlossaryTermRef">
+                                 <xsl:with-param name="code">ElemBlock</xsl:with-param>
+                                 <xsl:with-param name="term">Disallowed Substitutions</xsl:with-param>
+                              </xsl:call-template>
+                           </th>
+                           <td><xsl:value-of select="$block"/></td>
+                        </tr>
+                     </xsl:if>
+                  </tbody>
+               </table>
+            </xsl:with-param>
+            <xsl:with-param name="isOpened">true</xsl:with-param>
+            <xsl:with-param name="omitPanelContainer">true</xsl:with-param>
+         </xsl:call-template>
+      </xsl:if>
+      <xsl:call-template name="DLBlock">
+        <xsl:with-param name="id">
             <xsl:call-template name="GetComponentID">
                <xsl:with-param name="component" select="."/>
             </xsl:call-template>
          </xsl:with-param>
-         <xsl:with-param name="help" select="$HELP_PROPERTIES"/>
-         <xsl:with-param name="anchor">properties-table</xsl:with-param>
-         <xsl:with-param name="styleClass">sample</xsl:with-param>
-         <xsl:with-param name="caption">Properties</xsl:with-param>
          <xsl:with-param name="contents">
-            <table class="table table-striped xs3p-in-panel-table">
-               <tbody>
-                  <!-- Name -->
-                  <tr>
-                     <th>Name</th>
-                     <td><xsl:value-of select="@name"/></td>
-                  </tr>
-                  <!-- Type -->
-                  <tr>
-                     <th>Type</th>
-                     <td>
-                        <xsl:choose>
-                           <xsl:when test="xsd:simpleType">
-                              <xsl:text>Locally-defined simple type</xsl:text>
-                           </xsl:when>
-                           <xsl:when test="xsd:complexType">
-                              <xsl:text>Locally-defined complex type</xsl:text>
-                           </xsl:when>
-                           <xsl:when test="@type">
-                              <xsl:call-template name="PrintTypeRef">
-                                 <xsl:with-param name="ref" select="@type"/>
-                              </xsl:call-template>
-                           </xsl:when>
-                           <xsl:otherwise>
-                              <xsl:text>anyType</xsl:text>
-                           </xsl:otherwise>
-                        </xsl:choose>
-                     </td>
-                  </tr>
-                  <!-- Nillable -->
-                  <tr>
-                     <th>
-                        <xsl:call-template name="PrintGlossaryTermRef">
-                           <xsl:with-param name="code">Nillable</xsl:with-param>
-                           <xsl:with-param name="term">Nillable</xsl:with-param>
+            <!-- Name -->
+            <!-- Commented, not necessary to repeat  @name -->
+            <!-- <tr>
+               <th>Name</th>
+               <td><xsl:value-of select="@name"/></td>
+            </tr> -->
+            <!-- Type -->
+            <dl class="dl-horizontal">
+               <dt>Type</dt>
+               <dd>
+                  <xsl:choose>
+                     <xsl:when test="xsd:simpleType">
+                        <xsl:text>Locally-defined simple type</xsl:text>
+                     </xsl:when>
+                     <xsl:when test="xsd:complexType">
+                        <xsl:text>Locally-defined complex type</xsl:text>
+                     </xsl:when>
+                     <xsl:when test="@type">
+                        <xsl:call-template name="PrintTypeRef">
+                           <xsl:with-param name="ref" select="@type"/>
                         </xsl:call-template>
-                     </th>
-                     <td>
-                        <xsl:call-template name="PrintBoolean">
-                           <xsl:with-param name="boolean" select="@nillable"/>
-                        </xsl:call-template>
-                     </td>
-                  </tr>
-                  <!-- Abstract -->
-                  <tr>
-                     <th>
-                        <xsl:call-template name="PrintGlossaryTermRef">
-                           <xsl:with-param name="code">Abstract</xsl:with-param>
-                           <xsl:with-param name="term">Abstract</xsl:with-param>
-                        </xsl:call-template>
-                     </th>
-                     <td>
-                        <xsl:call-template name="PrintBoolean">
-                           <xsl:with-param name="boolean" select="@abstract"/>
-                        </xsl:call-template>
-                     </td>
-                  </tr>
-                  <!-- Default Value -->
-                  <xsl:if test="@default">
-                     <tr>
-                        <th>Default Value</th>
-                        <td><xsl:value-of select="@default"/></td>
-                     </tr>
-                  </xsl:if>
-                  <!-- Fixed Value -->
-                  <xsl:if test="@fixed">
-                     <tr>
-                        <th>Fixed Value</th>
-                        <td><xsl:value-of select="@fixed"/></td>
-                     </tr>
-                  </xsl:if>
-                  <!-- Final -->
-                  <xsl:variable name="final">
-                     <xsl:call-template name="PrintDerivationSet">
-                        <xsl:with-param name="EBV">
-                           <xsl:choose>
-                              <xsl:when test="@final">
-                                 <xsl:value-of select="@final"/>
-                              </xsl:when>
-                              <xsl:otherwise>
-                                 <xsl:value-of select="/xsd:schema/@finalDefault"/>
-                              </xsl:otherwise>
-                           </xsl:choose>
-                        </xsl:with-param>
-                     </xsl:call-template>
-                  </xsl:variable>
-                  <xsl:if test="normalize-space($final)!=''">
-                     <tr>
-                        <th>
-                           <xsl:call-template name="PrintGlossaryTermRef">
-                              <xsl:with-param name="code">ElemFinal</xsl:with-param>
-                              <xsl:with-param name="term">Substitution Group Exclusions</xsl:with-param>
-                           </xsl:call-template>
-                        </th>
-                        <td><xsl:value-of select="$final"/></td>
-                     </tr>
-                  </xsl:if>
-                  <!-- Block -->
-                  <xsl:variable name="block">
-                     <xsl:call-template name="PrintBlockSet">
-                        <xsl:with-param name="EBV">
-                           <xsl:choose>
-                              <xsl:when test="@block">
-                                 <xsl:value-of select="@block"/>
-                              </xsl:when>
-                              <xsl:otherwise>
-                                 <xsl:value-of select="/xsd:schema/@blockDefault"/>
-                              </xsl:otherwise>
-                           </xsl:choose>
-                        </xsl:with-param>
-                     </xsl:call-template>
-                  </xsl:variable>
-                  <xsl:if test="normalize-space($block)!=''">
-                     <tr>
-                        <th>
-                           <xsl:call-template name="PrintGlossaryTermRef">
-                              <xsl:with-param name="code">ElemBlock</xsl:with-param>
-                              <xsl:with-param name="term">Disallowed Substitutions</xsl:with-param>
-                           </xsl:call-template>
-                        </th>
-                        <td><xsl:value-of select="$block"/></td>
-                     </tr>
-                  </xsl:if>
-               </tbody>
-            </table>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:text>anyType</xsl:text>
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </dd>
+            <!-- Nillable -->
+              <xsl:if test="@nillable">
+               <dt>
+                  <xsl:call-template name="PrintGlossaryTermRef">
+                     <xsl:with-param name="code">Nillable</xsl:with-param>
+                     <xsl:with-param name="term">Nillable</xsl:with-param>
+                  </xsl:call-template>
+               </dt>
+               <dd>
+                  <xsl:call-template name="PrintBoolean">
+                     <xsl:with-param name="boolean" select="@nillable"/>
+                  </xsl:call-template>
+               </dd>
+              </xsl:if>
+            <!-- Abstract -->
+            <xsl:if test="@abstract">
+               <dt>
+                  <xsl:call-template name="PrintGlossaryTermRef">
+                     <xsl:with-param name="code">Abstract</xsl:with-param>
+                     <xsl:with-param name="term">Abstract</xsl:with-param>
+                  </xsl:call-template>
+               </dt>
+               <dd>
+                  <xsl:call-template name="PrintBoolean">
+                     <xsl:with-param name="boolean" select="@abstract"/>
+                  </xsl:call-template>
+               </dd>
+             </xsl:if>
+            
+            <!-- Default Value -->
+            <xsl:if test="@default">
+                <dt>Default Value</dt>
+                <dd><xsl:value-of select="@default"/></dd>
+            </xsl:if>
+            <!-- Fixed Value -->
+            <xsl:if test="@fixed">
+                <dt>Fixed Value</dt>
+                <dd><xsl:value-of select="@fixed"/></dd>
+            </xsl:if>
+            <!-- Final -->
+            <xsl:variable name="final">
+               <xsl:call-template name="PrintDerivationSet">
+                  <xsl:with-param name="EBV">
+                     <xsl:choose>
+                        <xsl:when test="@final">
+                           <xsl:value-of select="@final"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                           <xsl:value-of select="/xsd:schema/@finalDefault"/>
+                        </xsl:otherwise>
+                     </xsl:choose>
+                  </xsl:with-param>
+               </xsl:call-template>
+            </xsl:variable>
+            <xsl:if test="normalize-space($final)!=''">
+              <dt>
+                 <xsl:call-template name="PrintGlossaryTermRef">
+                    <xsl:with-param name="code">ElemFinal</xsl:with-param>
+                    <xsl:with-param name="term">Substitution Group Exclusions</xsl:with-param>
+                 </xsl:call-template>
+              </dt>
+              <dd><xsl:value-of select="$final"/></dd>
+            </xsl:if>
+            <!-- Block -->
+            <xsl:variable name="block">
+               <xsl:call-template name="PrintBlockSet">
+                  <xsl:with-param name="EBV">
+                     <xsl:choose>
+                        <xsl:when test="@block">
+                           <xsl:value-of select="@block"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                           <xsl:value-of select="/xsd:schema/@blockDefault"/>
+                        </xsl:otherwise>
+                     </xsl:choose>
+                  </xsl:with-param>
+               </xsl:call-template>
+            </xsl:variable>
+            <xsl:if test="normalize-space($block)!=''">
+              <dt>
+                 <xsl:call-template name="PrintGlossaryTermRef">
+                    <xsl:with-param name="code">ElemBlock</xsl:with-param>
+                    <xsl:with-param name="term">Disallowed Substitutions</xsl:with-param>
+                 </xsl:call-template>
+              </dt>
+              <dd><xsl:value-of select="$block"/></dd>
+            </xsl:if>
+            </dl>
          </xsl:with-param>
-         <xsl:with-param name="isOpened">true</xsl:with-param>
-         <xsl:with-param name="omitPanelContainer">true</xsl:with-param>
       </xsl:call-template>
+      
       <!-- Annotation -->
-      <xsl:call-template name="CollapseableBox">
+      <!-- <xsl:call-template name="CollapseableBox">
          <xsl:with-param name="id">
             <xsl:call-template name="GetComponentID">
                <xsl:with-param name="component" select="."/>
@@ -2152,6 +2290,20 @@ pre {
             </xsl:call-template>
          </xsl:with-param>
          <xsl:with-param name="isOpened">true</xsl:with-param>
+         <xsl:with-param name="containsCode">false</xsl:with-param>
+      </xsl:call-template> -->
+      <xsl:call-template name="AnnotationBlock">
+        <xsl:with-param name="id">
+            <xsl:call-template name="GetComponentID">
+               <xsl:with-param name="component" select="."/>
+            </xsl:call-template>
+         </xsl:with-param>
+         <xsl:with-param name="caption">Documentation</xsl:with-param>
+         <xsl:with-param name="contents">
+            <xsl:call-template name="PrintAnnotation">
+               <xsl:with-param name="component" select="."/>
+            </xsl:call-template>
+         </xsl:with-param>
          <xsl:with-param name="containsCode">false</xsl:with-param>
       </xsl:call-template>
    </xsl:template>
@@ -2175,10 +2327,11 @@ pre {
             <table class="table table-striped xs3p-in-panel-table">
                <tbody>
                   <!-- Name -->
-                  <tr>
+                  <!-- Commented, not necessary to repeat  @name -->
+                  <!-- <tr>
                      <th>Name</th>
                      <td><xsl:value-of select="@name"/></td>
-                  </tr>
+                  </tr> -->
                   <!-- Public Identifier -->
                   <tr>
                      <th>Public Identifier</th>
@@ -2407,10 +2560,11 @@ pre {
             <table class="table table-striped xs3p-in-panel-table">
                <tbody>
                   <!-- Name -->
-                  <tr>
+                  <!-- Commented, not necessary to repeat  @name -->
+                  <!-- <tr>
                      <th>Name</th>
                      <td><xsl:value-of select="@name"/></td>
-                  </tr>
+                  </tr> -->
                   <!-- Constraints -->
                   <tr>
                      <th>Content</th>
@@ -7177,7 +7331,43 @@ pre {
       </div>
       </div>
    </xsl:template>
-
+   
+   <xsl:template name="AnnotationBlock">
+      <xsl:param name="id"/>
+      <xsl:param name="caption"/>
+      <xsl:param name="contents"/>
+      <xsl:param name="containsCode">true</xsl:param>
+      <xsl:if test="normalize-space($contents)">
+        <dl class="dl-horizontal">
+          <dt><xsl:value-of select="$caption"/></dt>
+          <dd>
+            <xsl:choose>
+             <!--  <xsl:when test="not(normalize-space($contents))">
+                No documentation provided.
+              </xsl:when> -->
+              <xsl:when test="normalize-space(translate($containsCode,'TRUE','true'))='true'">
+                 <pre class="codehilite">
+                    <xsl:copy-of select="$contents"/>
+                 </pre>
+              </xsl:when>
+              <xsl:otherwise>
+                 <xsl:copy-of select="$contents"/>
+              </xsl:otherwise>
+           </xsl:choose>
+          </dd>
+        </dl>
+      </xsl:if>
+   </xsl:template>
+   
+   <xsl:template name="DLBlock">
+      <xsl:param name="id"/>
+      <xsl:param name="caption"/>
+      <xsl:param name="contents"/>
+      <xsl:if test="normalize-space($contents)">
+        <xsl:copy-of select="$contents"/>
+      </xsl:if>
+   </xsl:template>
+   
    <!--
      Returns the namespace of an attribute
      declaration or reference.
