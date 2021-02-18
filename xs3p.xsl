@@ -829,6 +829,39 @@ dl {
   margin-bottom: 10px;
 }
 
+.bs-callout {
+   padding: 20px;
+   padding-top: 10px;
+   padding-bottom: 5px;
+   margin: 20px 0;
+   border: 1px solid #eee;
+   border-left-width: 5px;
+   border-radius: 3px;
+}
+.bs-callout-danger {
+   border-left-color: #d9534f;
+}
+.bs-callout-warning {
+   border-left-color: #f0ad4e;
+}
+.bs-callout-info {
+   border-left-color: #5bc0de;
+}
+.bs-callout h4 {
+   margin-top: 0;
+   margin-bottom: 5px;
+}
+.bs-callout-danger h4 {
+   color: #d9534f;
+}
+.bs-callout-warning h4 {
+   color: #f0ad4e;
+}
+.bs-callout-info h4 {
+   color: black;
+   font-size: 11pt;
+}
+
 @media (min-width: 992px) {
     .xs3p-sidebar {
         position: fixed;
@@ -3022,6 +3055,21 @@ dl {
                <xsl:with-param name="component" select="$component"/>
             </xsl:call-template>
          </xsl:variable>
+         <div class="bs-callout bs-callout-info">
+            <h4>XML Instance Representation 
+               <span class="xs3p-panel-help">
+                  <button type="button" class="btn btn-doc" data-container="body" data-toggle="popover" data-placement="left" data-html="true" data-content="{$HELP_INSTANCE}">
+                  <span class="glyphicon glyphicon-question-sign"><xsl:text> </xsl:text></span>
+                  </button>
+               </span>
+            </h4>
+            
+            <pre class="codehilite">
+               <xsl:apply-templates select="$component" mode="sample"/>
+            </pre>
+         </div>
+
+
 
          <xsl:call-template name="CollapseableBox">
             <xsl:with-param name="id" select="$componentID"/>
