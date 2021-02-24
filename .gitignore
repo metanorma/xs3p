@@ -1,4 +1,6 @@
-# Generated examples
-examples/xsltproc-results/*
-examples/msxsl-results/*
-examples/xalanj-results/*
+.DS_Store
+*.log
+*.lock
+xsdvi/xsdvi.zip
+xsdvi/xsdvi.jar
+xsdvi/xercesImpl.jar
