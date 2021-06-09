@@ -1,27 +1,24 @@
-= UnitsML Schema Repository
-
-image:https://github.com/unitsml/schemas/workflows/ubuntu/badge.svg["Build Status", link="https://github.com/unitsml/schemas/actions?query=workflow%3Aubuntu"]
+= Metanorma xs3p
 
 == Purpose
 
-This is the schemas repository for UnitsML schemas.
-
-== Access
-
-Documents in this repository are available through:
-
-* https://schemas.unitsml.org[UnitsML Schema site]
-* https://unitsml.github.io/schemas/[UnitsML Schemas mini-site]
+This repository contains the Metanorma version of xs3p, an XSD
+documentation generator implemented as an XSLT stylesheet.
 
 
-== Contents
+== Usage
 
-This repository includes the UnitsML and UnitsML-Lite schemas.
+An XSLT processor is necessary.
 
-List of schema changes are provided in:
 
-include::schema_changes.adoc[]
+== Examples
 
-== Copyright
+* https://schema.unitsml.org[UnitsML schemas] (https://github.com/unitsml/schemas/[source])
+* https://schemas.isotc211.org[ISO/TC 211 XML schemas] (https://github.com/ISO-TC211/schemas[source])
 
-The content of this repository belongs to the UnitsML group.
+
+== License
+
+See LICENSE.adoc.
+
+The content of this repository belongs to its respective owners.
