@@ -1,0 +1,40 @@
+
+=== 2.0.0
+
+2.0.0 was released on https://github.com/bitfehler/xs3p/,
+since the FiForms Solutions page hosting xs3p became
+unavailable.
+
+* Major re-design using the Bootstrap framework
+* Support UTF-8 output
+* Support Markdown in <documentation> elements
+* Generate HTML5 output
+
+xs3p.xsl was modified to point to the new GitHub fork.
+
+
+=== 1.1.5
+
+Bugfix in the handling of recursive groups of xs3p.xsl.
+
+Credits to Martin Beran from Trusted Network Solutions
+for submitting the patch.
+
+
+=== 1.1.4
+
+* Moved the README.txt documentation online
+* Added xs3p_links.xsl file
+
+FiForms Solutions took up responsibility of hosting xs3p
+(after the DSTC website went dark), at:
+http://xml.fiforms.org/xs3p/
+
+xs3p.xsl was modified to point to the new FiForms page,
+while retaining the old link to DSTC.
+
+
+=== Prior to 1.1.4
+
+xs3p was developed by DSTC and was available at:
+http://titanium.dstc.edu.au/xml/xs3p/
