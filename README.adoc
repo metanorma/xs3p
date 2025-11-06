@@ -17,6 +17,27 @@ An XSLT processor is necessary.
 * https://schemas.isotc211.org[ISO/TC 211 XML schemas] (https://github.com/ISO-TC211/schemas[source])
 
 
+== Testing
+
+The test suite validates the xs3p.xsl stylesheet transformation using RSpec.
+
+.Running all tests
+[source,bash]
+----
+bundle exec rspec
+----
+
+.Running specific test suites
+[source,bash]
+----
+# Integration tests
+bundle exec rspec spec/integration/
+
+# Unit tests
+bundle exec rspec spec/unit/
+----
+
+
 == License
 
 See LICENSE.adoc.
