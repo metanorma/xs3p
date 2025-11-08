@@ -85,6 +85,32 @@
      -Same as above for simple type constraints, e.g. it doesn't
       summarise multiple pattern constraints.
 -->
+<!--
+  **************************************************************************
+  *                           DEPRECATION NOTICE                           *
+  **************************************************************************
+
+  THIS IS THE LEGACY VERSION OF XS3P
+
+  This file is maintained for backward compatibility only. For new projects,
+  please use xs3p-modular.xsl instead.
+
+  The monolithic xs3p.xsl file (9,414 lines) has been refactored into a
+  modular architecture with 25 specialized modules organized across 5
+  architectural layers. The modular version provides:
+
+  * Better maintainability - focused, single-responsibility modules
+  * Improved testability - individual modules can be tested in isolation
+  * Enhanced extensibility - new features can be added as new modules
+  * Clearer architecture - explicit layer dependencies and separation of concerns
+
+  RECOMMENDATION: Switch to xs3p-modular.xsl for all new development.
+
+  For migration guidance and detailed architecture documentation, see:
+  xsl/README.adoc
+
+  **************************************************************************
+-->
 <xsl:stylesheet
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns="http://www.w3.org/1999/xhtml"
@@ -113,7 +139,7 @@
 
    <!-- Title of HTML document. -->
    <xsl:param name="title"></xsl:param>
-   
+
    <!-- If 'true', sorts the top-level schema components by type,
         then name. Otherwise, displays the components by the order that
         they appear in the schema. -->
@@ -240,10 +266,10 @@
    <xsl:variable name="HELP_REPRESENTATION">The Schema Component Representation table below displays the underlying XML representation of the schema component. (Annotations are not shown.)</xsl:variable>
 
    <xsl:variable name="showCollapseableBox">false</xsl:variable>
-   
+
    <xsl:variable name="nav-width">270px</xsl:variable>
-   
-   
+
+
    <!-- ******** Main Document ******** -->
 
    <!--
@@ -307,28 +333,28 @@
                   </xsl:otherwise>
                </xsl:choose>
             </style>
-            
-            
+
+
             <script src="{$jQueryURL}">
                //Import JQuery, required for Bootstrap
             </script>
-            
+
             <script src="{$bootstrapURL}/js/bootstrap.min.js">
                // Import Bootstrap JS code
             </script>
-               
+
             <script src="https://cdnjs.cloudflare.com/ajax/libs/pagedown/1.0/Markdown.Converter.js">
               // Import Markdown converter for comments processing
             </script>
 
          </head>
-         
+
          <body lang="en" xml:lang="en">
             <div class="title-section">
                <div id="toggle">
                   <span>&lt;</span><!-- &#x2022; -->
                </div>
-               
+
          <!-- Note: some indentation resets in order to keep a minimum diff readability. -->
 
             <!-- Hidden documentation snippets for display in the popup -->
@@ -351,7 +377,7 @@
                </xsl:call-template>
                <xsl:call-template name="SectionFooter"/>
             </section>
-               
+
              <!-- Section: Redefined Schema Components -->
             <xsl:if test="xsd:redefine">
                <h2><a id="Redefinitions">Redefined Schema Components</a></h2>
@@ -454,17 +480,17 @@
                      <xsl:with-param name="code">document.write(document.lastModified);</xsl:with-param>
                   </xsl:call-template>
                </p>
-               
-               
+
+
             </div>
             <br/>
-            
+
             <nav>
                <div id="toc">
                   <xsl:apply-templates select="." mode="toc"/>
                </div>
             </nav>
-            
+
             <script>
                //TOC toggle animation
                $('#toggle').on('click', function(){
@@ -484,23 +510,23 @@
                   }
                });
             </script>
-            
+
             <script>
                   <xsl:text disable-output-escaping="yes">
 
                   $(function () { $("[data-toggle='tooltip']").tooltip(); });
                   $(function () { $("[data-toggle='popover']").popover({ trigger: "hover" }); });
-                  
+
                   $(function () { $("[data-toggle='modal']").click(function() { return false; })});
-                  
+
                   $(function () { $("[data-toggle='modal']").popover({ trigger: "hover", html: true,
     content: function () {
         var targetId = $(this).attr('data-target');
         return $(targetId).html();
     }}); });
-                  
-    
-                  
+
+
+
                   var c = new Markdown.Converter();
                   $('.xs3p-doc').each(function(i, obj) {
                      var rawDocID = '#' + $(this).attr('id') + '-raw';
@@ -554,20 +580,20 @@
                            <xsl:apply-templates select="." mode="toc"/>
                         </div>
                      </div> -->
-                   
+
 
                     <div class="col-md-9 content" role="main" id="xs3p-content">
 
-   
 
-            
+
+
 
                      </div>
                   </div>
                </div>
 
-               
-               
+
+
             </body>
          </xsl:if>
       </html>
@@ -748,7 +774,7 @@
                      <xsl:sort select="@name" order="ascending"/>
                   </xsl:apply-templates>
                </xsl:if>
-               
+
             </xsl:when>
             <!-- Display schema components in order as they appear in schema -->
             <xsl:otherwise>
@@ -804,11 +830,11 @@
       <xsl:call-template name="ComponentSectionHeader">
          <xsl:with-param name="component" select="."/>
       </xsl:call-template>
-      
+
       <xsl:if test="local-name() = 'element'">
          <object data="diagrams/{@name}.svg" type="image/svg+xml"></object>
       </xsl:if>
-      
+
       <!-- Hierarchy table (for types and elements) -->
       <xsl:apply-templates select="." mode="hierarchy"/>
 
@@ -894,7 +920,7 @@
    <!--
      CSS properties for the entire HTML document.
      -->
-     
+
    <xsl:template name="DocumentCSSStyles">
       <xsl:text disable-output-escaping="yes">
 
@@ -1079,14 +1105,14 @@ ul, ol {
 /* XS3P specific CSS */
 body {
     background-color: #FFF;
-    
+
 }
 
 .nav &gt; li.active {
     background-color: #FFF;
 }
 .nav &gt; li &gt; a:hover {
-   
+
     background-color: rgb(0,0,0, 0.05);
 }
 
@@ -1261,8 +1287,8 @@ dd ul {
 
       </xsl:text>
    </xsl:template>
-     
-     
+
+
    <xsl:template name="DocumentCSSStyles_Old">
       <xsl:text disable-output-escaping="yes">
 
@@ -1288,7 +1314,7 @@ dd ul {
 
 body {
    margin-left: 298px;
-   margin-right: 2em; 
+   margin-right: 2em;
 }
 
 nav {
@@ -2484,8 +2510,8 @@ nav {
                   </tbody>
                </table>
             </xsl:variable>
-         
-         
+
+
          <xsl:call-template name="DLBlock">
                  <xsl:with-param name="id">
                      <xsl:call-template name="GetComponentID">
@@ -2596,7 +2622,7 @@ nav {
                      <td><xsl:value-of select="$block"/></td>
                   </tr>
                </xsl:if>
-               
+
             </tbody>
          </table>
       </xsl:variable>
@@ -2735,7 +2761,7 @@ nav {
                      </xsl:choose>
                   </td>
                </tr>
-               
+
                <xsl:variable name="usedBy">
                   <xsl:for-each select="/xsd:schema//xsd:element[@ref = current()/@name]">
                       <xsl:call-template name="PrintTypeRef">
@@ -2750,7 +2776,7 @@ nav {
                     <td><xsl:copy-of select="$usedBy"/></td>
                  </tr>
                </xsl:if>
-               
+
                <!-- Nillable -->
                <xsl:if test="@nillable">
                   <tr>
@@ -2852,7 +2878,7 @@ nav {
             </tbody>
          </table>
       </xsl:variable>
-   
+
       <xsl:choose>
          <xsl:when test="$showCollapseableBox = 'true'">
             <xsl:call-template name="CollapseableBox">
@@ -2889,7 +2915,7 @@ nav {
                </xsl:with-param>
                <xsl:with-param name="isOpened">true</xsl:with-param>
                <xsl:with-param name="containsCode">false</xsl:with-param>
-            </xsl:call-template> 
+            </xsl:call-template>
          </xsl:when>
          <xsl:otherwise>
             <xsl:call-template name="DLBlock">
@@ -2929,17 +2955,17 @@ nav {
             <xsl:apply-templates select="@*|node()" mode="table_to_dl"/>
       </xsl:copy>
    </xsl:template>
-   
+
    <xsl:template match="*[local-name() = 'table']" mode="table_to_dl">
       <dl class="dl-horizontal">
          <xsl:apply-templates mode="table_to_dl"/>
       </dl>
    </xsl:template>
-   
+
     <xsl:template match="*[local-name() = 'tbody'] | *[local-name() = 'thead'] | *[local-name() = 'tr']" mode="table_to_dl">
       <xsl:apply-templates mode="table_to_dl"/>
    </xsl:template>
-   
+
    <xsl:template match="*[local-name() = 'td'] | *[local-name() = 'th']" mode="table_to_dl">
       <xsl:variable name="class"><xsl:if test="local-name() = 'th'">header</xsl:if></xsl:variable>
       <xsl:choose>
@@ -3051,7 +3077,7 @@ nav {
                <xsl:with-param name="containsCode">false</xsl:with-param>
             </xsl:call-template>
 			</xsl:otherwise>
-         
+
 		</xsl:choose>
    </xsl:template>
 
@@ -3209,7 +3235,7 @@ nav {
                <xsl:with-param name="isOpened">true</xsl:with-param>
                <xsl:with-param name="omitPanelContainer">true</xsl:with-param>
             </xsl:call-template>
-				
+
 				<!-- Annotation -->
 				<xsl:call-template name="CollapseableBox">
 					<xsl:with-param name="id">
@@ -3229,7 +3255,7 @@ nav {
 					<xsl:with-param name="isOpened">true</xsl:with-param>
 					<xsl:with-param name="containsCode">false</xsl:with-param>
 				</xsl:call-template>
-				
+
          </xsl:when>
          <xsl:otherwise>
             <xsl:call-template name="DLBlock">
@@ -3243,7 +3269,7 @@ nav {
                   <xsl:apply-templates select="exslt:node-set($contents)" mode="table_to_dl"/>
                </xsl:with-param>
             </xsl:call-template>
-				
+
 				<xsl:call-template name="AnnotationBlock">
 				  <xsl:with-param name="id">
 						<xsl:call-template name="GetComponentID">
@@ -3258,10 +3284,10 @@ nav {
 					</xsl:with-param>
 					<xsl:with-param name="containsCode">false</xsl:with-param>
 				</xsl:call-template>
-				
+
          </xsl:otherwise>
       </xsl:choose>
-      
+
    </xsl:template>
 
    <!--
@@ -3382,7 +3408,7 @@ nav {
                <xsl:with-param name="containsCode">false</xsl:with-param>
             </xsl:call-template>
 			</xsl:otherwise>
-         
+
 		</xsl:choose>
    </xsl:template>
 
@@ -3435,7 +3461,7 @@ nav {
          </div>
       </xsl:if>
    </xsl:template>
-   
+
    <xsl:template match="xsd:element | xsd:attribute | xsd:simpleType" mode="hiddendoc_modal">
       <xsl:if test="./xsd:annotation/xsd:documentation">
          <xsl:variable name="documentation">
@@ -3808,21 +3834,21 @@ nav {
             </xsl:call-template>
          </xsl:variable>
          <div class="bs-callout bs-callout-info">
-            <h4>XML Instance Representation 
+            <h4>XML Instance Representation
                <span class="xs3p-panel-help">
                   <button type="button" class="btn btn-doc" data-container="body" data-toggle="popover" data-placement="right" data-html="true" data-content="{$HELP_INSTANCE}">
                   <span class="glyphicon glyphicon-question-sign"><xsl:text> </xsl:text></span>
                   </button>
                </span>
             </h4>
-            
+
             <pre class="codehilite">
                <xsl:apply-templates select="$component" mode="sample"/>
             </pre>
          </div>
 
 
-          <!-- 
+          <!--
          <xsl:call-template name="CollapseableBox">
             <xsl:with-param name="id" select="$componentID"/>
             <xsl:with-param name="help" select="$HELP_INSTANCE"/>
@@ -4970,7 +4996,7 @@ nav {
          <!-- data-toggle="modal" -->
          <!-- title="Show documentation for {$component/@name}" btn-link -->
          <button type="button" class="btn btn-link btn-doc" data-container="body" data-toggle="modal" data-target="#{$documentation}-popup"><span class="glyphicon glyphicon-info-sign"><xsl:text> </xsl:text></span></button>
-         
+
       </xsl:if>
    </xsl:template>
 
@@ -6386,23 +6412,23 @@ nav {
             <xsl:with-param name="component" select="$component"/>
          </xsl:call-template>
       </xsl:variable>
-      
-      
+
+
       <div class="bs-callout bs-callout-info">
-            <h4>Schema Component Representation 
+            <h4>Schema Component Representation
                <span class="xs3p-panel-help">
                   <button type="button" class="btn btn-doc" data-container="body" data-toggle="popover" data-placement="left" data-html="true" data-content="{$HELP_REPRESENTATION}">
                   <span class="glyphicon glyphicon-question-sign"><xsl:text> </xsl:text></span>
                   </button>
                </span>
             </h4>
-            
+
             <pre class="codehilite">
                <xsl:apply-templates select="$component" mode="schemaComponent"/>
             </pre>
          </div>
 
-      
+
      <!--  <xsl:call-template name="CollapseableBox">
          <xsl:with-param name="id" select="$componentID"/>
          <xsl:with-param name="help" select="$HELP_REPRESENTATION"/>
@@ -8164,7 +8190,7 @@ nav {
       </div>
       </div>
    </xsl:template>
-   
+
    <xsl:template name="AnnotationBlock">
       <xsl:param name="id"/>
       <xsl:param name="caption"/>
@@ -8191,7 +8217,7 @@ nav {
         </dl>
       </xsl:if>
    </xsl:template>
-   
+
    <xsl:template name="DLBlock">
       <xsl:param name="id"/>
       <xsl:param name="caption"/>
@@ -8203,7 +8229,7 @@ nav {
         <xsl:copy-of select="$contents"/>
       </xsl:if>
    </xsl:template>
-   
+
    <!--
      Returns the namespace of an attribute
      declaration or reference.
@@ -8239,7 +8265,7 @@ nav {
    <xsl:template name="GetComponentDescription">
       <xsl:param name="component"/>
       <xsl:param name="nav" select="'false'"/>
-      
+
       <xsl:choose>
          <xsl:when test="$nav = 'true' and normalize-space(translate($sortByComponent,'TRUE','true'))='true'">
             <xsl:choose>
@@ -8272,7 +8298,7 @@ nav {
             </xsl:choose>
          </xsl:when>
          <xsl:otherwise>
-      
+
             <xsl:choose>
                <xsl:when test="local-name($component)='all'">
                   <xsl:text>All Model Group</xsl:text>

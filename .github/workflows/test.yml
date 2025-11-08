@@ -1,0 +1,99 @@
+name: Test XS3P Modular Architecture
+
+# Trigger conditions for running tests
+on:
+  # Run tests on pushes to main and master branches
+  push:
+    branches:
+      - main
+      - master
+
+  # Run tests on all pull requests
+  pull_request:
+
+  # Allow manual workflow dispatch from Actions tab
+  workflow_dispatch:
+
+# Define test jobs
+jobs:
+  test:
+    name: Test on Ruby ${{ matrix.ruby-version }} (${{ matrix.os }})
+
+    # Test matrix: multiple Ruby versions and operating systems
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        ruby-version: ['3.0', '3.1', '3.2', '3.3']
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      # Step 1: Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Ruby environment with caching
+      # Note: Nokogiri (included in Gemfile) provides XSLT transformation support
+      - name: Set up Ruby ${{ matrix.ruby-version }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true  # Automatically runs 'bundle install' and caches gems
+
+      # Step 3: Display Ruby and Bundler versions for debugging
+      - name: Display versions
+        run: |
+          echo "Ruby version: $(ruby --version)"
+          echo "Bundler version: $(bundle --version)"
+          echo "RSpec version: $(bundle exec rspec --version)"
+
+      # Step 4: Run RSpec test suite
+      - name: Run RSpec tests
+        run: bundle exec rspec --format documentation --color
+
+      # Step 5: Run Rubocop for code quality checks
+      - name: Run Rubocop
+        run: bundle exec rubocop
+        continue-on-error: true  # Don't fail the build on linting issues
+
+  # Minimal test job for quick feedback
+  quick-test:
+    name: Quick Test (Latest Ruby on Ubuntu)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Note: Nokogiri (included in Gemfile) provides XSLT transformation support
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Run RSpec tests
+        run: bundle exec rspec
+
+  # Integration test to verify both XSL versions produce identical output
+  xsl-compatibility-test:
+    name: XSL Compatibility Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Note: Nokogiri (included in Gemfile) provides XSLT transformation support
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Run integration tests
+        run: bundle exec rspec spec/integration/
+
+      - name: Run unit tests
+        run: bundle exec rspec spec/unit/

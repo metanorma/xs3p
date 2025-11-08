@@ -1,20 +1,75 @@
 = Metanorma xs3p
 
+image:https://github.com/metanorma/xs3p/actions/workflows/test.yml/badge.svg["Test Status", link="https://github.com/metanorma/xs3p/actions/workflows/test.yml"]
+
 == Purpose
 
 This repository contains the Metanorma version of xs3p, an XSD
 documentation generator implemented as an XSLT stylesheet.
 
+The stylesheet is available in two versions:
+
+* **Modular version** (recommended): [`xsl/xs3p-modular.xsl`](xsl/xs3p-modular.xsl:1) - refactored into 25 specialized modules for improved maintainability and testability
+* **Legacy version**: [`xsl/xs3p.xsl`](xsl/xs3p.xsl:1) - original monolithic file (9,414 lines), maintained for backward compatibility
 
 == Usage
 
 An XSLT processor is necessary.
+
+=== Using the modular version (recommended)
+
+[source,bash]
+----
+xsltproc xsl/xs3p-modular.xsl your-schema.xsd > documentation.html
+----
+
+=== Using the legacy version
+
+[source,bash]
+----
+xsltproc xsl/xs3p.xsl your-schema.xsd > documentation.html
+----
+
+NOTE: Both versions produce identical output. The modular version offers better maintainability and testability.
+
+== Architecture
+
+The modular version is organized into 5 architectural layers with 25 specialized modules:
+
+* **Core Foundation** (3 modules) - Parameters, constants, and keys
+* **Utilities** (5 modules) - Helper templates for common operations
+* **Rendering Engine** (3 modules) - Low-level output formatters
+* **Content Generators** (10 modules) - Schema-specific content generation
+* **Presentation Layer** (4 modules) - HTML document orchestration
+
+For detailed documentation of the modular architecture, see [`xsl/README.adoc`](xsl/README.adoc:1).
 
 
 == Examples
 
 * https://schema.unitsml.org[UnitsML schemas] (https://github.com/unitsml/schemas/[source])
 * https://schemas.isotc211.org[ISO/TC 211 XML schemas] (https://github.com/ISO-TC211/schemas[source])
+
+
+== Testing
+
+The test suite validates the xs3p.xsl stylesheet transformation using RSpec.
+
+.Running all tests
+[source,bash]
+----
+bundle exec rspec
+----
+
+.Running specific test suites
+[source,bash]
+----
+# Integration tests
+bundle exec rspec spec/integration/
+
+# Unit tests
+bundle exec rspec spec/unit/
+----
 
 
 == License

@@ -1,0 +1,271 @@
+= XS3P modular architecture
+
+== Purpose
+
+This directory contains the modular implementation of XS3P (XML Schema Documentation Generator). The original monolithic [`xs3p.xsl`](xs3p.xsl:1) file (9,414 lines) has been refactored into 25 specialized modules organized across 5 architectural layers for improved maintainability, testability, and clarity.
+
+== Architecture
+
+The modular architecture separates concerns into distinct layers, each with specific responsibilities:
+
+.Architectural layers of XS3P
+[source]
+----
+┌──────────────────────────────────────────┐
+│     Presentation Layer (4 modules)      │  ← HTML document generation
+├──────────────────────────────────────────┤
+│   Content Generators (10 modules)       │  ← Schema-specific content
+├──────────────────────────────────────────┤
+│    Rendering Engine (3 modules)         │  ← Output formatting
+├──────────────────────────────────────────┤
+│      Utilities (5 modules)              │  ← Helper functions
+├──────────────────────────────────────────┤
+│     Core Foundation (3 modules)         │  ← Base configuration
+└──────────────────────────────────────────┘
+----
+
+=== Layer 1: Core foundation
+
+Fundamental building blocks that define constants, parameters, and keys used throughout the stylesheet.
+
+* [`core/parameters.xsl`](core/parameters.xsl:1) - Global parameters for customization
+* [`core/constants.xsl`](core/constants.xsl:1) - System-wide constants and variables
+* [`core/keys.xsl`](core/keys.xsl:1) - XPath key definitions for efficient lookups
+
+=== Layer 2: Utilities
+
+Reusable helper templates for common operations across all layers.
+
+* [`utils/common-helpers.xsl`](utils/common-helpers.xsl:1) - General utility templates (repeating content, boolean printing, occurrence info)
+* [`utils/strings.xsl`](utils/strings.xsl:1) - String manipulation templates (translation, whitespace handling)
+* [`utils/namespaces.xsl`](utils/namespaces.xsl:1) - Namespace resolution and prefix handling
+* [`utils/references.xsl`](utils/references.xsl:1) - Component reference handling and link generation
+* [`utils/schema-location.xsl`](utils/schema-location.xsl:1) - Schema file location resolution
+
+=== Layer 3: Rendering engine
+
+Low-level templates responsible for formatting and output generation.
+
+* [`renderers/xml-pretty-printer.xsl`](renderers/xml-pretty-printer.xsl:1) - XML instance formatting with syntax highlighting
+* [`renderers/glossary.xsl`](renderers/glossary.xsl:1) - Glossary term definitions and references
+* [`renderers/ui-components.xsl`](renderers/ui-components.xsl:1) - UI elements (collapseable boxes, links, etc.)
+
+=== Layer 4: Content generators
+
+High-level templates for generating specific sections of schema documentation.
+
+* [`generators/component-links.xsl`](generators/component-links.xsl:1) - Links to schema components (elements, types, attributes)
+* [`generators/hierarchy-tables.xsl`](generators/hierarchy-tables.xsl:1) - Type hierarchy and substitution group displays
+* [`generators/properties-facets.xsl`](generators/properties-facets.xsl:1) - Simple type facet constraints
+* [`generators/properties-tables.xsl`](generators/properties-tables.xsl:1) - Component properties documentation
+* [`generators/instance-samples-types.xsl`](generators/instance-samples-types.xsl:1) - XML instance examples for types
+* [`generators/instance-samples-elements.xsl`](generators/instance-samples-elements.xsl:1) - XML instance examples for elements
+* [`generators/instance-samples-attributes.xsl`](generators/instance-samples-attributes.xsl:1) - XML instance examples for attributes
+* [`generators/instance-samples-groups.xsl`](generators/instance-samples-groups.xsl:1) - XML instance examples for model groups
+* [`generators/schema-components.xsl`](generators/schema-components.xsl:1) - Schema component representation
+* [`generators/svg-diagrams.xsl`](generators/svg-diagrams.xsl:1) - SVG diagram generation for schema visualization
+
+=== Layer 5: Presentation layer
+
+Top-level orchestration of the complete HTML document output.
+
+* [`presentation/css-styles.xsl`](presentation/css-styles.xsl:1) - CSS stylesheet generation
+* [`presentation/javascript.xsl`](presentation/javascript.xsl:1) - JavaScript code generation
+* [`presentation/navigation.xsl`](presentation/navigation.xsl:1) - Table of contents and navigation
+* [`presentation/html-document.xsl`](presentation/html-document.xsl:1) - Main document structure and top-level templates
+
+== Directory structure
+
+[source]
+----
+xsl/
+├── xs3p-modular.xsl          # Modular entry point (NEW)
+├── xs3p.xsl                  # Legacy monolithic version (DEPRECATED)
+├── core/                     # Layer 1: Foundation
+│   ├── constants.xsl
+│   ├── keys.xsl
+│   └── parameters.xsl
+├── utils/                    # Layer 2: Utilities
+│   ├── common-helpers.xsl
+│   ├── namespaces.xsl
+│   ├── references.xsl
+│   ├── schema-location.xsl
+│   └── strings.xsl
+├── renderers/                # Layer 3: Rendering
+│   ├── glossary.xsl
+│   ├── ui-components.xsl
+│   └── xml-pretty-printer.xsl
+├── generators/               # Layer 4: Generators
+│   ├── component-links.xsl
+│   ├── hierarchy-tables.xsl
+│   ├── instance-samples-attributes.xsl
+│   ├── instance-samples-elements.xsl
+│   ├── instance-samples-groups.xsl
+│   ├── instance-samples-types.xsl
+│   ├── properties-facets.xsl
+│   ├── properties-tables.xsl
+│   ├── schema-components.xsl
+│   └── svg-diagrams.xsl
+└── presentation/             # Layer 5: Presentation
+    ├── css-styles.xsl
+    ├── html-document.xsl
+    ├── javascript.xsl
+    └── navigation.xsl
+----
+
+== Module dependencies
+
+The architecture follows a strict dependency hierarchy:
+
+* **Core Foundation** has no dependencies
+* **Utilities** depends on Core Foundation
+* **Rendering Engine** depends on Utilities and Core Foundation
+* **Content Generators** depends on Rendering Engine, Utilities, and Core Foundation
+* **Presentation Layer** depends on all lower layers
+
+This layered approach ensures:
+
+* Clear separation of concerns
+* Predictable compilation order
+* Easy identification of appropriate module for changes
+* Reduced coupling between modules
+
+== Usage
+
+=== Using the modular version (recommended)
+
+For new projects, use the modular entry point:
+
+[source,bash]
+----
+xsltproc xsl/xs3p-modular.xsl your-schema.xsd > documentation.html
+----
+
+=== Using the legacy version (backward compatibility)
+
+The original monolithic version is still available for backward compatibility:
+
+[source,bash]
+----
+xsltproc xsl/xs3p.xsl your-schema.xsd > documentation.html
+----
+
+IMPORTANT: The [`xs3p.xsl`](xs3p.xsl:1) file is deprecated and maintained only for backward compatibility. New projects should use [`xs3p-modular.xsl`](xs3p-modular.xsl:1).
+
+== Benefits of modularization
+
+=== Maintainability
+
+* Each module has a focused responsibility
+* Changes are localized to specific modules
+* Easier to understand individual pieces
+* Reduced cognitive load when making changes
+
+=== Testability
+
+* Individual modules can be tested in isolation
+* Easier to create unit tests for specific functionality
+* Better test coverage through targeted testing
+* Faster test execution by testing only affected modules
+
+=== Extensibility
+
+* New features can be added as new modules
+* Existing modules can be extended without affecting others
+* Custom modules can be easily integrated
+* Third-party extensions are simpler to develop
+
+=== Performance
+
+* Modules can be optimized independently
+* Unused modules can potentially be excluded
+* Better memory management through modular loading
+
+== SVG diagrams module
+
+The [`generators/svg-diagrams.xsl`](generators/svg-diagrams.xsl:1) module generates visual diagrams for schema elements. This module was specifically requested during the modularization effort.
+
+=== Purpose
+
+Generates SVG (Scalable Vector Graphics) diagrams that visually represent schema structure and relationships.
+
+=== Usage
+
+SVG diagrams are automatically generated for top-level element declarations and embedded in the documentation output:
+
+[source,xml]
+----
+<object data="diagrams/elementName.svg" type="image/svg+xml"></object>
+----
+
+=== Features
+
+* Visual representation of element structure
+* Display of type hierarchies
+* Illustration of element relationships
+* Scalable vector graphics for high-quality output at any size
+
+=== Integration
+
+The SVG diagrams module integrates with the presentation layer to embed diagrams at appropriate locations in the generated documentation. It leverages the utilities layer for namespace and reference resolution.
+
+== Migration guide
+
+=== Switching from xs3p.xsl to xs3p-modular.xsl
+
+. Update your build scripts to reference [`xs3p-modular.xsl`](xs3p-modular.xsl:1) instead of [`xs3p.xsl`](xs3p.xsl:1)
+. Test the generated output to ensure it matches your expectations
+. The modular version produces identical output to the original, so no changes should be needed
+
+.Before (legacy)
+[source,bash]
+----
+xsltproc xsl/xs3p.xsl schema.xsd > output.html
+----
+
+.After (modular)
+[source,bash]
+----
+xsltproc xsl/xs3p-modular.xsl schema.xsd > output.html
+----
+
+=== Customizing the modular version
+
+To customize specific functionality:
+
+. Identify the appropriate module for your changes using the module responsibilities above
+. Modify the specific module file
+. Test your changes
+. The changes will be automatically included when using [`xs3p-modular.xsl`](xs3p-modular.xsl:1)
+
+== Testing
+
+The modular architecture enables comprehensive testing:
+
+* Integration tests verify complete transformation using both versions
+* Validators check specific aspects of generated output
+* All tests pass for both legacy and modular versions
+* Test suite is located in the `spec/` directory
+
+Run tests using:
+
+[source,bash]
+----
+bundle exec rspec
+----
+
+== Development guidelines
+
+When working with the modular architecture:
+
+. **Choose the right module**: Identify which module should handle your change based on layer responsibilities
+. **Maintain separation of concerns**: Keep templates focused on their module's purpose
+. **Follow dependencies**: Only depend on lower-layer modules
+. **Document changes**: Update module documentation when adding new templates
+. **Test thoroughly**: Ensure changes work with both modular and integration testing
+
+== References
+
+* XS3P original project: https://github.com/bitfehler/xs3p
+* Metanorma fork: https://github.com/unitsml/schemas
+* W3C XML Schema specification: https://www.w3.org/TR/xmlschema-1/
