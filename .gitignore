@@ -4,3 +4,6 @@
 xsdvi/xsdvi.zip
 xsdvi/xsdvi.jar
 xsdvi/xercesImpl.jar
+doc/
+prefixes.xml
+units.xml

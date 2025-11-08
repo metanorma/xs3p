@@ -5,23 +5,17 @@ else
 SHELL := /bin/bash
 endif
 
-UNITSMLSRC := $(wildcard unitsml/*.xsd)
-UNITSMLLITESRC := $(wildcard unitsmllite/*.xsd)
-UNITSMLDOC := $(patsubst unitsml/%.xsd,doc/unitsml/%/index.html,$(UNITSMLSRC))
-UNITSMLLITEDOC := $(patsubst unitsmllite/%.xsd,doc/unitsmllite/%/index.html,$(UNITSMLLITESRC))
-TOTALDOCS := $(UNITSMLDOC) $(UNITSMLLITEDOC)
+# Generate documentation for test XSD files
+TESTSRC := $(wildcard tests/*.xsd)
+TESTDOC := $(patsubst tests/%.xsd,doc/tests/%/index.html,$(TESTSRC))
 
 XSDVIPATH := ${CURDIR}/xsdvi/xsdvi.jar
 XSLT_FILE := ${CURDIR}/xsl/xs3p.xsl
 
-PREFIXES_PATH := https://github.com/unitsml/unitsdb/raw/master/prefixes.yaml
-UNITS_PATH := https://github.com/unitsml/unitsdb/raw/master/units.yaml
-SCHEMA_VERSION := 1.0
-CURR_SCHEMA := UnitsML-v${SCHEMA_VERSION}
+# Default target: generate documentation for test XSD files
+all: $(TESTDOC)
 
-
-all: $(TOTALDOCS) xsdgen
-
+# Setup target: download xsdvi jar if needed
 setup: $(XSDVIPATH)
 
 xsdvi/xsdvi.zip:
@@ -30,33 +24,27 @@ xsdvi/xsdvi.zip:
 
 $(XSDVIPATH): xsdvi/xercesImpl.jar
 	curl -sSL https://github.com/metanorma/xsdvi/releases/download/v1.0/xsdvi-1.0.jar > $@
-	# unzip -p $< dist/lib/xsdvi.jar > $@
 
 xsdvi/xercesImpl.jar: xsdvi/xsdvi.zip
 	unzip -p $< dist/lib/xercesImpl.jar > $@
 
-doc/%/index.html: %.xsd $(XSDVIPATH)
+# Generate HTML documentation for each XSD file
+doc/tests/%/index.html: tests/%.xsd $(XSDVIPATH)
 	mkdir -p $(dir $@)diagrams; \
 	java -jar $(XSDVIPATH) $(CURDIR)/$< -rootNodeName all -oneNodeOnly -outputPath $(dir $@)diagrams; \
-	xsltproc --nonet --param title "'Units Markup language (UnitsML) Schema Documentation $(notdir $*)'" \
+	xsltproc --nonet --param title "'XSD Schema Documentation for $(notdir $*)'" \
 		--output $@ $(XSLT_FILE) $<
 
-xsdgen:
-	cd template; \
-	ruby prefixes_yaml_parse.rb $(PREFIXES_PATH) > prefixes.xml; \
-	ruby units_yaml_parse.rb $(UNITS_PATH) > units.xml; \
-	xsltproc --nonet --output $(CURR_SCHEMA).xsd xsdprocess.xsl $(CURR_SCHEMA).template
+# Test target: run Ruby test suite
+test:
+	bundle exec rspec
 
-
-gitupdate:
-	git add doc
-	git commit -m "XSD docs generated"
-	git push
-
+# Clean generated documentation
 clean:
 	rm -rf doc
 
+# Clean everything including downloaded dependencies
 distclean: clean
 	rm -rf xsdvi
 
-.PHONY: all clean setup distclean
+.PHONY: all clean setup distclean test
